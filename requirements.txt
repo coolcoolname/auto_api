@@ -1,0 +1,3 @@
+unittest ==
+unittestreport == 1.5.1
+PyYAML ==6.0.1
