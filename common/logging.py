@@ -2,33 +2,61 @@ import logging
 import os
 import time
 
-path = os.path.dirname(os.path.realpath(__file__)) #获取本地路径
-log_path = os.path.join(path,'logs') #用来存在日志的路径
-#如果不存在‘logs'文件夹，就自动创建一个
-if not os.path.exists(log_path):
-    os.makedirs(log_path)
+# timepath = os.path.dirname(os.path.realpath(__file__)) #获取本地路径
+# log_path = os.path.join(path,'logs') #用来存在日志的路径
+# #如果不存在‘logs'文件夹，就自动创建一个
+# if not os.path.exists(log_path):
+#     os.makedirs(log_path)
 
 
-class Logger:
+class myLogger():
+
     def __init__(self):
-        self.logname = os.path.join(log_path, '%s.log' % time.strftime('%Y_%m_%d'))
-        self.logger = logging.getLogger()
+        """
+         %(levername)s	日志级别名称
+        %(pathname)s	当前执行程序的路径(即脚本所在的位置)
+        %(filename)s	执行脚本程序名
+        %(lineno)d	日志当前的行号
+        %(thread)d  线程ID
+        %(asctime)s	打印日志的时间
+        %(message)s	日志信息
+        """
+        # self.logger = logging.getLogger(name=name)
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
 
-        # File handler
-        file_handler = logging.FileHandler()
-        file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        file_handler.setFormatter(file_formatter)
-        self.logger.addHandler(file_handler)
+        # formatter = logging.Formatter('[%(asctime)s - %(name)s - %(filename)10s - %(lineno)d]-[%(thread)d]- %(levelname)s - %(message)s')
+        formatter = logging.Formatter('[%(asctime)s - %(name)s - %(filename)10s - %(lineno)d]-[%(thread)d]- %(levelname)s - %(message)s')
 
-        # Stream handler
-        stream_handler = logging.StreamHandler()
-        stream_formatter = logging.Formatter('%(levelname)s - %(message)s')
-        stream_handler.setFormatter(stream_formatter)
-        self.logger.addHandler(stream_handler)
+        # 文件写入
+        fileHandler=logging.FileHandler(filename="myapp.log", mode='a', encoding="utf-8")
+        fileHandler.setLevel(logging.DEBUG)
+        fileHandler.setFormatter(formatter)
 
-    def log(self, message, level=logging.INFO):
-        if level == logging.INFO:
-            self.logger.info(message)
-        elif level == logging.ERROR:
-            self.logger.error(message)
+        # 控制台输出
+        streamHandler = logging.StreamHandler()
+        streamHandler.setLevel(logging.INFO)
+        streamHandler.setFormatter(formatter)
 
+        self.logger.addHandler(fileHandler)
+        self.logger.addHandler(streamHandler)
+
+    def debug(self,messgae):
+        self.logger.debug(messgae)
+
+
+    def info(self,message):
+        self.logger.info(message)
+
+    def warning(self,message):
+        self.logger.warning(message)
+
+    def error(self,message):
+        self.logger.error(message)
+
+
+log = myLogger()
+log.debug("---测试开始----")
+log.info("---123----")
+log.warning("---测试进行中")
+log.error("---测试结束---")
