@@ -29,7 +29,7 @@ class myLogger():
         formatter = logging.Formatter('[%(asctime)s - %(name)s - %(filename)10s - %(lineno)d]-[%(thread)d]- %(levelname)s - %(message)s')
 
         # 文件写入
-        fileHandler=logging.FileHandler(filename="myapp.log", mode='a', encoding="utf-8")
+        fileHandler=logging.FileHandler(filename="../logs/myapp.log", mode='a', encoding="utf-8")
         fileHandler.setLevel(logging.DEBUG)
         fileHandler.setFormatter(formatter)
 
