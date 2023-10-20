@@ -30,12 +30,12 @@ class myLogger():
 
         # 文件写入
         fileHandler=logging.FileHandler(filename="../logs/myapp.log", mode='a', encoding="utf-8")
-        fileHandler.setLevel(logging.DEBUG)
+        fileHandler.setLevel(logging.INFO)
         fileHandler.setFormatter(formatter)
 
         # 控制台输出
         streamHandler = logging.StreamHandler()
-        streamHandler.setLevel(logging.INFO)
+        streamHandler.setLevel(logging.DEBUG)
         streamHandler.setFormatter(formatter)
 
         self.logger.addHandler(fileHandler)
@@ -54,9 +54,9 @@ class myLogger():
     def error(self,message):
         self.logger.error(message)
 
-
-log = myLogger()
-log.debug("---测试开始----")
-log.info("---123----")
-log.warning("---测试进行中")
-log.error("---测试结束---")
+if __name__ == '__main__':
+    log = myLogger()
+    log.debug("---测试开始----")
+    log.info("---123----")
+    log.warning("---测试进行中")
+    log.error("---测试结束---")

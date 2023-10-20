@@ -1,5 +1,5 @@
 import requests
 import unittest
-import pyyaml
+import yaml
 import pymysql
 import logging
