@@ -1,4 +1,5 @@
 import logging
+from logging import handlers
 import os
 import time
 
@@ -13,25 +14,37 @@ class myLogger():
 
     def __init__(self):
         """
-         %(levername)s	日志级别名称
-        %(pathname)s	当前执行程序的路径(即脚本所在的位置)
-        %(filename)s	执行脚本程序名
-        %(lineno)d	日志当前的行号
-        %(thread)d  线程ID
-        %(asctime)s	打印日志的时间
-        %(message)s	日志信息
+        %(name)s：Logger的名字
+        %(levelno)s：打印日志级别的数值
+        %(levelname)s：打印日志级别的名称
+        %(pathname)s：打印当前执行程序的路径，其实就是sys.argv[0]
+        %(filename)s：打印当前执行程序名
+        %(funcName)s：打印日志的当前函数
+        %(lineno)d：打印日志的当前行号
+        %(asctime)s：打印日志的时间
+        %(thread)d：打印线程ID
+        %(threadName)s：打印线程名称
+        %(process)d：打印进程ID
+        %(message)s：打印日志信息
         """
         # self.logger = logging.getLogger(name=name)
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
         # formatter = logging.Formatter('[%(asctime)s - %(name)s - %(filename)10s - %(lineno)d]-[%(thread)d]- %(levelname)s - %(message)s')
-        formatter = logging.Formatter('[%(asctime)s - %(name)s - %(filename)10s - %(lineno)d]-[%(thread)d]- %(levelname)s - %(message)s')
+        formatter = logging.Formatter('[%(asctime)s - %(name)s - %(pathname)s - %(funcName)s - %(filename)s[line:%(lineno)d]]-[%(thread)d]- %(levelname)s - %(message)s')
 
         # 文件写入
         fileHandler=logging.FileHandler(filename="../logs/myapp.log", mode='a', encoding="utf-8")
         fileHandler.setLevel(logging.INFO)
         fileHandler.setFormatter(formatter)
+
+        time_rotating_fileHandler=handlers.TimedRotatingFileHandler(
+                                            filename="../logs/myapp.log",
+                                            when='D',
+                                            backupCount=5,
+                                            encoding='utf-8')
+        time_rotating_fileHandler.setFormatter(formatter)
 
         # 控制台输出
         streamHandler = logging.StreamHandler()
