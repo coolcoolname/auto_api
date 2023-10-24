@@ -119,4 +119,4 @@ if __name__ == '__main__':
         tool.login_by_password()
 
     else:
-        print("会员查询失败！")
+        log.info("会员查询失败")
