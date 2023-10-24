@@ -1,6 +1,7 @@
 -
   user_name: 秦资鸿
   tenant_id: 589337
-  phone_number: '18040461332'
-  device_id: b2e17266cdf6ee47
+  phone: '18040461332'
+  deviceId: b2e17266cdf6ee47
   password: Dmall123
+  countryCode: '86'

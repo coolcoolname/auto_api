@@ -5,43 +5,45 @@
 import json
 import time
 import yaml
+import hashlib
 
 import dependencies as dd
 from common import logging
 
 
-base_url = 'http://testgwec.dmall-os.com'
-
 log = logging.myLogger()
 
+base_url = 'http://testgwec.dmall-os.com'
 base_headers ={
-    "sysversion":"Android-13",
-    "apptypeenum":"1",
-    "accept":"application/json, text/plain, */*",
-    "gw-trace-id":"fc32303a-88f0-4de1-bd6a-551bc38a805a",
-    "dmall-tenant-id":"589337",
-    "dmall-locale":"n_US",
-    "versionname":"1.0.3",
-    "devicetime":" 697779788471",
-    "uuid":"291de9e317ee235de81f30004e2a91ee2",
-    "platform":"ANDROID",
-    "orgid":"542483",
-    "dmall-timezone":"Europe/Warsaw",
-    "dmall-group-id":"100138",
-    "appbuildnumber":"Android-13",
-    "device":"realmeRMX3708",
-    "user-agent":"ECDmall/1.0.3",
-    "requestfrom":"PP",
-    "content-type":"application/x-www-form-urlencoded",
-    "content-length":"92",
-    "accept-encoding":"gzip",
+"sysversion":"Android-13",
+"apptypeenum":"1",
+"accept":"application/json,text/plain,*/*",
+"gw-trace-id":"0fc2fb53-1071-4ca8-a5cd-8dd90a5b751a",
+"dmall-tenant-id":"589337",
+"dmall-locale":"en_US",
+"versionname":"1.0.3",
+"devicetime":"1698128332923",
+"uuid":"291de9e317ee235de81f30004e2a91ee2",
+"platform":"ANDROID",
+"orgid":"542483",
+"dmall-timezone":"Europe/Warsaw",
+"dmall-group-id":"100138",
+"appbuildnumber":"Android-13",
+"device":"realmeRMX3708",
+"user-agent":"ECDmall/1.0.3",
+"requestfrom":"APP",
+"content-type":"application/x-www-form-urlencoded",
+"content-length":"92",
+"accept-encoding":"gzip",
 }
 
 
 class BasicToolAcquisition:
+
     def __init__(self):
         self.log = logging.myLogger()
         self.read_yaml()
+        # self.base_headers["deviceTime"] = self.device_time()
 
     def device_time(self):
         """
@@ -52,12 +54,21 @@ class BasicToolAcquisition:
         log.debug('返回当前时间戳为：{}'.format(current_timestamp))
         return current_timestamp
 
-    import yaml
-
     def read_yaml(self):
         with open("../data/user_info.yaml", 'r', encoding='utf-8') as f:
             self.yaml = yaml.safe_load(f)
         log.debug('读取到的会员信息:{}'.format(self.yaml))
+
+    def encrypt_string(self,string):
+        """
+        给账号加密使用
+        :param string:
+        :return: 返回密文
+        """
+        md5 = hashlib.md5()
+        md5.update(string.encode('utf-8'))
+        encrypt_string = md5.hexdigest()
+        return encrypt_string
 
     def query_account_list(self):
         """
@@ -68,23 +79,44 @@ class BasicToolAcquisition:
         url = base_url + path
         base_headers["deviceTime"] = self.device_time()
 
-        phone_number = self.yaml[0]['phone_number']
-        device_id = self.yaml[0]['device_id']
-        params = [{'phone': phone_number,'deviceId': device_id}]
-        #params = [{"phone":"18040461332","deviceId":"b2e17266cdf6ee47"}]
-        print(params)
+        phone = self.yaml[0]['phone']
+        deviceId = self.yaml[0]['deviceId']
+        params = [{'phone': phone,'deviceId': deviceId}]
+
         params = json.dumps(params)
-        print(params)
-        params = {"parmas":params}
-        print(params)
-
-
+        params = {"params":params}
+        # print(params)
         log.debug(f'请求地址:{url}  请求体:{params}  请求头:{base_headers}  ')
         res = dd.requests.post(url=url,headers=base_headers,data=params).json()
         log.info('响应结果{}'.format(res))
+        return res["code"]
 
+    def login_by_password(self):
+        path = '/api/single/member/loginByPassword'
+        url = base_url + path
+        base_headers["deviceTime"] = self.device_time()
+
+        password = self.encrypt_string(self.yaml[0]['password'])
+        phone = self.yaml[0]['phone']
+        countryCode = self.yaml[0]['countryCode']
+        deviceId = self.yaml[0]['deviceId']
+        params = [{"password":password,"phone":phone,"countryCode":countryCode,"deviceId":deviceId}]
+        print(params)
+        params = json.dumps(params)
+        params = {"params": params}
+        print(params)
+        log.debug(f'请求地址:{url}  请求体:{params}  请求头:{base_headers}')
+        res = dd.requests.post(url=url, headers=base_headers, data=params).json()
+        log.info('响应结果{}'.format(res))
+        log.info(f'获得ticket：{res["data"]["ticket"]} \n 获得token：{res["data"]["token"]}')
+
+        return res["data"]["ticket"] , res["data"]["token"]
 
 if __name__ == '__main__':
     tool = BasicToolAcquisition()
     # tool.device_time()
-    tool.query_account_list()
+    if tool.query_account_list() == "0000":
+        tool.login_by_password()
+
+    else:
+        print("会员查询失败！")
