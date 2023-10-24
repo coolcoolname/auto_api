@@ -38,7 +38,7 @@ class myLogger():
         fileHandler=logging.FileHandler(filename="../logs/myapp.log", mode='a', encoding="utf-8")
         fileHandler.setLevel(logging.INFO)
         fileHandler.setFormatter(formatter)
-
+        #设置日志文件按照“天”分割
         time_rotating_fileHandler=handlers.TimedRotatingFileHandler(
                                             filename="../logs/myapp.log",
                                             when='D',

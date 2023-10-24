@@ -70,16 +70,17 @@ class BasicToolAcquisition:
 
         phone_number = self.yaml[0]['phone_number']
         device_id = self.yaml[0]['device_id']
-        params = [{'phone': phone_number,'device_id': device_id}]
+        params = [{'phone': phone_number,'deviceId': device_id}]
+        #params = [{"phone":"18040461332","deviceId":"b2e17266cdf6ee47"}]
         print(params)
         params = json.dumps(params)
         print(params)
-        params = {"params":params}
+        params = {"parmas":params}
         print(params)
 
 
         log.debug(f'请求地址:{url}  请求体:{params}  请求头:{base_headers}  ')
-        res = dd.requests.post(url=url,headers=base_headers,json=params).json()
+        res = dd.requests.post(url=url,headers=base_headers,data=params).json()
         log.info('响应结果{}'.format(res))
 
 

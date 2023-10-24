@@ -1,4 +1,8 @@
 # 下次远程失败就使用 git config --global http.sslVerify false
+#Failed to connect to github.com port 443 after 21142 ms: Couldn't connect to server
+    git config --global --get http.proxy
+    git config --global --get https.proxy
+
 
 unittestreport == 1.5.1
 PyYAML == 6.0.1
