@@ -38,11 +38,13 @@ base_headers ={
 }
 
 
-class BasicToolAcquisition:
-
+class BasicToolAcquisition():
+    log = logging.myLogger()
     def __init__(self):
-        self.log = logging.myLogger()
-        self.read_yaml()
+        pass
+        # self.log = logging.myLogger()
+        # file_path = "../data/user_info.yaml"
+        # self.read_yaml(file_path)
         # self.base_headers["deviceTime"] = self.device_time()
 
     def device_time(self):
@@ -54,9 +56,14 @@ class BasicToolAcquisition:
         log.debug('返回当前时间戳为：{}'.format(current_timestamp))
         return current_timestamp
 
-    def read_yaml(self):
-        with open("../data/user_info.yaml", 'r', encoding='utf-8') as f:
+    def read_yaml(self,file_path):
+        """
+        :param file_path: 传入文件路径
+        :return: 返回yaml文件读取结果
+        """
+        with open(file=file_path, mode='r', encoding='utf-8') as f:
             self.yaml = yaml.safe_load(f)
+            return self.yaml
         log.debug('读取到的会员信息:{}'.format(self.yaml))
 
     def encrypt_string(self,string):
@@ -79,14 +86,15 @@ class BasicToolAcquisition:
         url = base_url + path
         base_headers["deviceTime"] = self.device_time()
 
-        phone = self.yaml[0]['phone']
-        deviceId = self.yaml[0]['deviceId']
+        read_file = self.read_yaml( "../data/user_info.yaml")
+        phone = read_file[0]['phone']
+        deviceId = read_file[0]['deviceId']
         params = [{'phone': phone,'deviceId': deviceId}]
 
         params = json.dumps(params)
         params = {"params":params}
         # print(params)
-        log.debug(f'请求地址:{url}  请求体:{params}  请求头:{base_headers}  ')
+        log.debug(f'请求地址:{url}  请求体:{params}  请求头:{base_headers} ')
         res = dd.requests.post(url=url,headers=base_headers,data=params).json()
         log.info('响应结果{}'.format(res))
         return res["code"]
@@ -96,21 +104,29 @@ class BasicToolAcquisition:
         url = base_url + path
         base_headers["deviceTime"] = self.device_time()
 
-        password = self.encrypt_string(self.yaml[0]['password'])
-        phone = self.yaml[0]['phone']
-        countryCode = self.yaml[0]['countryCode']
-        deviceId = self.yaml[0]['deviceId']
+        read_file = self.read_yaml("../data/user_info.yaml")
+        password = self.encrypt_string(read_file[0]['password'])
+        phone = read_file[0]['phone']
+        countryCode = read_file[0]['countryCode']
+        deviceId = read_file[0]['deviceId']
         params = [{"password":password,"phone":phone,"countryCode":countryCode,"deviceId":deviceId}]
-        print(params)
+
         params = json.dumps(params)
         params = {"params": params}
-        print(params)
+
         log.debug(f'请求地址:{url}  请求体:{params}  请求头:{base_headers}')
         res = dd.requests.post(url=url, headers=base_headers, data=params).json()
         log.info('响应结果{}'.format(res))
         log.info(f'获得ticket：{res["data"]["ticket"]} \n 获得token：{res["data"]["token"]}')
+        ticket = res["data"]["ticket"]
+        token = res["data"]["token"]
+        return ticket,token
 
-        return res["data"]["ticket"] , res["data"]["token"]
+    def  get_token(self):
+        if self.query_account_list() == '0000':
+            return self.login_by_password()
+        else:
+            log.info("会员查询失败")
 
 if __name__ == '__main__':
     tool = BasicToolAcquisition()
