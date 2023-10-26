@@ -41,7 +41,7 @@ class  ShopCart:
             params = [{"needQueryFlag":False,"cartOrgWareRpcReqs":[{"skuId":sku_id,"count":1,"checked":True,"wareSaleType":1}]}]
             params = json.dumps(params)
             params = {"params":params}
-            self.log.debug((f'请求地址:{url}  请求体:{params}  请求头:{self.headers}'))
+            self.log.debug((f'添加购物车请求地址:{url}  请求体:{params}  请求头:{self.headers}'))
             response = dd.requests.post(url=url, headers=self.headers,data=params).json()
             self.log.info('响应结果{}'.format(response))
             if response["code"] == '0000':
