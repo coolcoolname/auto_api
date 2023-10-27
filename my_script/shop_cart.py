@@ -35,6 +35,7 @@ class  ShopCart:
 
         with open("../data/SKU.yaml",'r',encoding='utf-8') as file:
             data  = yaml.safe_load(file)
+
         count = 0
         for item in data:
             sku_id = item["sku_id"]
