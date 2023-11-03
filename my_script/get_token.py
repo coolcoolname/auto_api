@@ -39,7 +39,7 @@ base_headers ={
 
 
 class BasicToolAcquisition():
-    log = logging.myLogger()
+    # log = logging.myLogger()
     def __init__(self):
         pass
         # self.log = logging.myLogger()
@@ -128,11 +128,7 @@ class BasicToolAcquisition():
         else:
             log.info("会员查询失败")
 
-if __name__ == '__main__':
-    tool = BasicToolAcquisition()
-    # tool.device_time()
-    if tool.query_account_list() == "0000":
-        tool.login_by_password()
-
-    else:
-        log.info("会员查询失败")
+# if __name__ == '__main__':
+#     tool = BasicToolAcquisition()
+#     # tool.device_time()
+#     tool.get_token()
