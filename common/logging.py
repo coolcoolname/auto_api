@@ -32,7 +32,7 @@ class myLogger():
         self.logger.setLevel(logging.DEBUG)
 
         # formatter = logging.Formatter('[%(asctime)s - %(name)s - %(filename)10s - %(lineno)d]-[%(thread)d]- %(levelname)s - %(message)s')
-        formatter = logging.Formatter('[%(asctime)s - %(name)s - %(pathname)s - %(funcName)s - %(filename)s[line:%(lineno)d]]-[%(thread)d]- %(levelname)s - %(message)s')
+        formatter = logging.Formatter('[%(asctime)s - %(name)s - %(pathname)s - %(funcName)s - %(filename)s[line:%(lineno)d]]-[%(thread)d] - %(levelname)s - %(message)s')
 
         # 文件写入
         fileHandler=logging.FileHandler(filename="../logs/myapp.log", mode='a', encoding="utf-8")
